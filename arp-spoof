@@ -37,7 +37,7 @@ function array_func
 	echo $flag
 }
 
-for i in `seq 1 10`; do
+for i in `seq 1 254`; do
 	ip="$baseip.$i"
 	fl=$(array_func $ip)
 
